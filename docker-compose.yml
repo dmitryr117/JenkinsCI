@@ -68,7 +68,7 @@ services:
     depends_on:
       - nginx-proxy
       - verdaccio
-      # - letsencrypt
+      - letsencrypt-nginx-proxy-companion
     environment:
       VIRTUAL_HOST: ${JENKINS_DOMAIN}
       VIRTUAL_PORT: 8080
