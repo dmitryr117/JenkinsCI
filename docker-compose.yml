@@ -92,9 +92,8 @@ services:
     restart: always
     depends_on:
       - nginx-proxy
-      # - letsencrypt
       - verdaccio
-      - jenkins-port-forward
+      # - letsencrypt
     environment:
       VIRTUAL_HOST: ${JENKINS_DOMAIN}
       VIRTUAL_PORT: 8080
