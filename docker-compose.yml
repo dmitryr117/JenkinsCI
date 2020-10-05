@@ -16,10 +16,10 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - conf:/etc/nginx/conf.d
-      - vhost:/etc/nginx/vhost.d
-      - html:/usr/share/nginx/html
-      - certs:/etc/nginx/certs
+      - nginx_conf:/etc/nginx/conf.d
+      - nginx_vhost:/etc/nginx/vhost.d
+      - nginx_html:/usr/share/nginx/html
+      - nginx_certs:/etc/nginx/certs
     labels:
       - "com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy=true"
     logging:
@@ -75,6 +75,10 @@ services:
       default:
 
 volumes:
+  nginx_conf:
+  nginx_vhost:
+  nginx_html:
+  nginx_certs:
   verdaccio-vol:
   jenkins-vol:
   
