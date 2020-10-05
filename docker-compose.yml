@@ -33,9 +33,9 @@ services:
       restart: always
       container_name: letsencrypt-nginx-proxy-companion
       volumes:
-        - "/var/run/docker.sock:/var/run/docker.sock:ro"
-        - "nginx-data:/etc/nginx"
-        - "nginx_html:/usr/share/nginx/html"
+        - nginx_data:/etc/nginx
+        - nginx_html:/usr/share/nginx/html
+        - /var/run/docker.sock:/var/run/docker.sock:ro
       depends_on: # Make sure we start nginx proxy container first
           - nginx-proxy
 
