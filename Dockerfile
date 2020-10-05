@@ -23,5 +23,5 @@ chmod +x /usr/local/bin/docker-compose
 
 RUN usermod -aG docker jenkins
 
-USER jenkins
+#USER jenkins
 
