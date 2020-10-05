@@ -2,7 +2,9 @@
 # Reduce bandwidth usage during testing and builds.
 # Testing and deployment dockerfiles have to account for this
 # And link their npm registry as follows:
-# npm set registry http://verdaccio:4873/
+# 1 - first make sure that contailer is networked to 'cicdnet' external network. 
+# 2 - inside Dockerfiles that jenkins will run make sure 
+#     to set verdaccio registry: 'npm set registry http://verdaccio:4873/'
 
 version: "3"
 
@@ -23,7 +25,7 @@ services:
       - ./verdaccio/plugins:/verdaccio/plugins
       - verdaccio-vol:/verdaccio/storage
     networks:
-      nxcicdnet:
+      cicdnet:
 
   jenkins:
     image: dmitryr117/jenkinsci:latest
@@ -35,12 +37,14 @@ services:
       - jenkins-vol:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      nxcicdnet:
+      cicdnet:
 
 volumes:
   verdaccio-vol:
   jenkins-vol:
   
 networks:
-  nxcicdnet:
+  cicdnet:
+    external: true
+    name: cicdnet
 
