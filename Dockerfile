@@ -22,6 +22,7 @@ RUN curl -L "https://github.com/docker/compose/releases/download/1.26.0/docker-c
 chmod +x /usr/local/bin/docker-compose
 
 RUN usermod -aG docker jenkins
+RUN usermod -aG docker root
 
-#USER jenkins
+USER jenkins
 

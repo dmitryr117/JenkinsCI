@@ -9,19 +9,18 @@
 version: "3"
 
 services:
-  nginx:
-    image: nginx
+  nginx-proxy:
+    image: jwilder/nginx-proxy
     container_name: nginx-proxy
     ports:
       - "80:80"
       #- "443:443"
     volumes:
-      - nginx_conf:/etc/nginx/conf.d
-      - nginx_vhost:/etc/nginx/vhost.d
+      - nginx_data:/etc/nginx
       - nginx_html:/usr/share/nginx/html
-      - nginx_certs:/etc/nginx/certs
-    # labels:
-    #   - "com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy=true"
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    networks:
+      nginx-proxy-network:
     logging:
       options:
         max-size: "5m"
@@ -65,7 +64,6 @@ services:
   #       max-size: "5m"
   #       max-file: "3"
 
-
   verdaccio:
     image: verdaccio/verdaccio
     container_name: verdaccio_for_ci
@@ -86,7 +84,7 @@ services:
         max-size: "5m"
         max-file: "3"
     networks:
-      default:
+      npmreg-network:
 
   jenkins-port-forward:
     image: nginx
@@ -100,15 +98,15 @@ services:
     restart: always
     depends_on:
       - nginx
-      # - dockergen
       # - letsencrypt
       - verdaccio
       - jenkins-port-forward
     environment:
       VIRTUAL_HOST: ${JENKINS_DOMAIN}
+      VIRTUAL_PORT: 8080
       LETSENCRYPT_HOST: ${JENKINS_DOMAIN}
       LETSENCRYPT_EMAIL: ${LE_USER_EMAIL}
-      JENKINS_OPTS: "--httpPort=80" # needed to work with reverse-proxy
+      #JENKINS_OPTS: "--httpPort=80" # needed to work with reverse-proxy
     expose: 
       - "80"
     #ports: # no longer needed as we will access via reverse-proxy.
@@ -121,18 +119,18 @@ services:
         max-size: "5m"
         max-file: "3"
     networks:
-      default:
+      nginx-proxy-network:
+      npmreg-network:
 
 volumes:
-  nginx_conf:
-  nginx_vhost:
+  nginx_data:
   nginx_html:
-  nginx_certs:
   verdaccio-vol:
   jenkins-vol:
   
 networks:
-  default:
+  nginx-proxy-network:
     external: 
       name: cicdnet
+  npmreg-network:
 
