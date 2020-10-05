@@ -9,21 +9,45 @@
 version: "3"
 
 services:
+  nginx:
+    image: nginx
+    container_name: ci-nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - conf:/etc/nginx/conf.d
+      - vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - certs:/etc/nginx/certs
+    labels:
+      - "com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy=true"
+    logging:
+      options:
+        max-size: "5m"
+        max-file: "3"
+    networks:
+      default:
+
   verdaccio:
     image: verdaccio/verdaccio
     container_name: verdaccio_for_ci
     restart: always
     environment:
-      - VERDACCIO_PORT=4873
-      - VERDACCIO_PROTOCOL=http
-    ports:
-      - "4873:4873"
+      VERDACCIO_PORT: 4873 # leave verdaccio to internal access only.
+      VERDACCIO_PROTOCOL: http
+    ports: # Needed because we can access over SSH tunnel.
+     - "4873:4873"
     expose: 
       - "4873"
     volumes:
       - ./verdaccio/conf:/verdaccio/conf
       - ./verdaccio/plugins:/verdaccio/plugins
       - verdaccio-vol:/verdaccio/storage
+    logging:
+      options:
+        max-size: "5m"
+        max-file: "3"
     networks:
       default:
 
@@ -31,11 +55,22 @@ services:
     image: dmitryr117/jenkinsci:latest
     container_name: jenkins_ci
     restart: always
-    ports:
-      - "8080:8080"
+    environment:
+      VIRTUAL_HOST: ${JENKINS_DOMAIN}
+      LETSENCRYPT_HOST: ${JENKINS_DOMAIN}
+      LETSENCRYPT_EMAIL: ${LE_USER_EMAIL}
+      JENKINS_OPTS: "--httpPort=80" # needed to work with reverse-proxy
+    expose: 
+      - "80"
+    #ports: # no longer needed as we will access via reverse-proxy.
+    #  - "8080:8080"
     volumes:
       - jenkins-vol:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
+    logging:
+      options:
+        max-size: "5m"
+        max-file: "3"
     networks:
       default:
 
