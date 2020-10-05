@@ -11,7 +11,7 @@ version: "3"
 services:
   nginx-proxy:
     image: jwilder/nginx-proxy
-    container_name: nginx-proxy
+    container_name: ci-nginx-proxy
     ports:
       - "80:80"
       #- "443:443"
@@ -97,7 +97,7 @@ services:
     container_name: jenkins_ci
     restart: always
     depends_on:
-      - nginx
+      - nginx-proxy
       # - letsencrypt
       - verdaccio
       - jenkins-port-forward
