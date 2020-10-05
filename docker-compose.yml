@@ -25,7 +25,7 @@ services:
       - ./verdaccio/plugins:/verdaccio/plugins
       - verdaccio-vol:/verdaccio/storage
     networks:
-      cicdnet:
+      default:
 
   jenkins:
     image: dmitryr117/jenkinsci:latest
@@ -37,14 +37,14 @@ services:
       - jenkins-vol:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      cicdnet:
+      default:
 
 volumes:
   verdaccio-vol:
   jenkins-vol:
   
 networks:
-  cicdnet:
-    external: true
-    name: cicdnet
+  default:
+    external: 
+      name: cicdnet
 
