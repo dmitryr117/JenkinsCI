@@ -9,9 +9,9 @@
 version: "3"
 
 services:
-  nginx:
+  ci-nginx-proxy:
     image: nginx
-    container_name: ci-nginx-proxy
+    container_name: ci-nginx-reverse-proxy
     ports:
       - "80:80"
       - "443:443"
@@ -55,6 +55,8 @@ services:
     image: dmitryr117/jenkinsci:latest
     container_name: jenkins_ci
     restart: always
+    depends_on:
+      - nginx
     environment:
       VIRTUAL_HOST: ${JENKINS_DOMAIN}
       LETSENCRYPT_HOST: ${JENKINS_DOMAIN}
