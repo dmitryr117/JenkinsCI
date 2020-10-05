@@ -86,12 +86,6 @@ services:
     networks:
       npmreg-network:
 
-  jenkins-port-forward:
-    image: nginx
-    container_name: jenkins-port-forward
-    volumes:
-      - ./port-forward:/etc/nginx/
-
   jenkins:
     image: dmitryr117/jenkinsci:latest
     container_name: jenkins_ci
@@ -108,7 +102,7 @@ services:
       LETSENCRYPT_EMAIL: ${LE_USER_EMAIL}
       #JENKINS_OPTS: "--httpPort=80" # needed to work with reverse-proxy
     expose: 
-      - "80"
+      - "8080"
     #ports: # no longer needed as we will access via reverse-proxy.
     #  - "8080:8080"
     volumes:
