@@ -106,5 +106,7 @@ volumes:
 networks:
   nginx-proxy-network:
     external: 
-      name: cicdnet
+      name: ci-proxy
   npmreg-network:
+    external:
+      name: cicdnet
